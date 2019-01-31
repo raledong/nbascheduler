@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.deerowl.dao.PlayerPerformanceMapper">
+    <resultMap id="BaseResultMap" type="cn.deerowl.model.PlayerPerformance" >
+        <result column="id" property="id" />
+        <result column="player_id" property="playerId"/>
+        <result column="team_id" property="teamId"/>
+        <result column="data_analysis_id" property="dataAnalysisId"/>
+        <result column="is_starting" property="isStarting"/>
+        <result column="position" property="position"/>
+        <result column="time" property="time"/>
+        <result column="success_shot" property="successShot"/>
+        <result column="total_shot" property="totalShot"/>
+        <result column="three_point_success_shot" property="threePointSuccessShot"/>
+        <result column="three_point_total_shot" property="threePointTotalShot"/>
+        <result column="free_throw_success_shot" property="freeThrowSuccessShot"/>
+        <result column="free_throw_total_shot" property="freeThrowTotalShot"/>
+        <result column="front_court_rebound" property="frontCourtRebound"/>
+        <result column="back_court_rebound" property="backCourtRebound"/>
+        <result column="assist" property="assist"/>
+        <result column="foul" property="foul"/>
+        <result column="steal" property="steal"/>
+        <result column="turnover" property="turnover"/>
+        <result column="block" property="block"/>
+        <result column="score" property="score"/>
+        <result column="positive_and_negative_value" property="positiveAndNegativeValue"/>
+    </resultMap>
+
+    <sql id="base_columns">
+        player_id, team_id, data_analysis_id, is_starting, position, time,
+        success_shot, total_shot,
+        three_point_success_shot, three_point_total_shot,
+        free_throw_success_shot, free_throw_total_shot,
+        front_court_rebound, back_court_rebound,
+        assist, foul, steal, turnover, block, score,
+        positive_and_negative_value
+    </sql>
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO player_performance
+#         (player_id, team_id, data_analysis_id, position, time,
+#          success_shot, total_shot,
+#          three_point_success_shot, three_point_total_shot,
+#          free_throw_success_shot, free_throw_total_shot,
+#          front_court_rebound, back_court_rebound,
+#          assist, foul, steal, turnover, block, score,
+#          positive_and_negative_value)
+        (
+          <include refid="base_columns"/>
+        )
+        VALUES
+        (#{playerId}, #{teamId}, #{dataAnalysisId}, #{isStarting}, #{position}, #{time},
+         #{successShot}, #{totalShot}, #{threePointSuccessShot}, #{threePointTotalShot},
+         #{freeThrowSuccessShot}, #{freeThrowTotalShot},
+         #{frontCourtRebound}, #{backCourtRebound},
+         #{assist}, #{foul}, #{steal}, #{turnover}, #{block}, #{score},
+         #{positiveAndNegativeValue})
+    </insert>
+
+    <insert id="batchAdd" parameterType="java.util.List">
+        INSERT INTO player_performance
+        (player_id, team_id, data_analysis_id, is_starting, position, time,
+         success_shot, total_shot,
+         three_point_success_shot, three_point_total_shot,
+         free_throw_success_shot, free_throw_total_shot,
+         front_court_rebound, back_court_rebound,
+         assist, foul, steal, turnover, block, score,
+         positive_and_negative_value)
+        VALUES
+        <foreach collection="list" item="p" separator=",">
+            (#{p.playerId}, #{p.teamId}, #{p.dataAnalysisId}, #{p.isStarting}, #{p.position}, #{p.time},
+            #{p.successShot}, #{p.totalShot}, #{p.threePointSuccessShot}, #{p.threePointTotalShot},
+            #{p.freeThrowSuccessShot}, #{p.freeThrowTotalShot},
+            #{p.frontCourtRebound}, #{p.backCourtRebound},
+            #{p.assist}, #{p.foul}, #{p.steal}, #{p.turnover}, #{p.block}, #{p.score},
+            #{p.positiveAndNegativeValue})
+        </foreach>
+    </insert>
+
+    <select id="findByTeamIdAndDataAnalysisId" resultMap="BaseResultMap">
+        SELECT * FROM player_performance
+        WHERE team_id = #{teamId} AND data_analysis_id = #{dataAnalysisId}
+    </select>
+
+    <select id="findByTeamIdAndGameId" resultMap="BaseResultMap">
+        SELECT p.* FROM player_performance p
+            LEFT JOIN data_analysis d ON p.data_analysis_id = d.id
+            LEFT JOIN game g ON g.id = d.game_id
+        WHERE team_id = #{teamId} AND g.id = #{gameId}
+    </select>
+</mapper>

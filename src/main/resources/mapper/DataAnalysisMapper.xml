@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.deerowl.dao.DataAnalysisMapper">
+    <resultMap id="BaseResultMap" type="cn.deerowl.model.BriefDataAnalysis" >
+        <id column="id" property="id" />
+        <result column="game_id" property="gameId"/>
+        <result column="home_team_score" property="homeTeamScore"/>
+        <result column="visit_team_score" property="visitTeamScore"/>
+        <result column="home_team_first_quarter_score" property="homeTeamFirstQuarterScore"/>
+        <result column="home_team_second_quarter_score" property="homeTeamSecondQuarterScore"/>
+        <result column="home_team_third_quarter_score" property="homeTeamThirdQuarterScore"/>
+        <result column="home_team_fourth_quarter_score" property="homeTeamFourthQuarterScore"/>
+        <result column="visit_team_first_quarter_score" property="visitTeamFirstQuarterScore"/>
+        <result column="visit_team_second_quarter_score" property="visitTeamSecondQuarterScore"/>
+        <result column="visit_team_third_quarter_score" property="visitTeamThirdQuarterScore"/>
+        <result column="visit_team_fourth_quarter_score" property="visitTeamFourthQuarterScore"/>
+    </resultMap>
+
+    <resultMap id="ResultMapWithPlayerPerformance" type="cn.deerowl.model.DataAnalysis" extends="BaseResultMap">
+        <collection property="playerPerformances"
+                    resultMap="cn.deerowl.dao.PlayerPerformanceMapper.BaseResultMap"
+                    javaType="java.util.List"
+                    ofType="cn.deerowl.model.PlayerPerformance"
+                    columnPrefix="per_"/>
+    </resultMap>
+
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO data_analysis
+        (game_id, home_team_score, visit_team_score,
+         home_team_first_quarter_score, home_team_second_quarter_score, home_team_third_quarter_score, home_team_fourth_quarter_score,
+         visit_team_first_quarter_score, visit_team_second_quarter_score, visit_team_third_quarter_score, visit_team_fourth_quarter_score)
+        VALUES
+        (#{gameId}, #{homeTeamScore}, #{visitTeamScore},
+        #{homeTeamFirstQuarterScore}, #{homeTeamSecondQuarterScore}, #{homeTeamThirdQuarterScore}, #{homeTeamFourthQuarterScore},
+        #{visitTeamFirstQuarterScore}, #{visitTeamSecondQuarterScore}, #{visitTeamThirdQuarterScore}, #{visitTeamFourthQuarterScore})
+    </insert>
+
+    <select id="findById" resultMap="BaseResultMap">
+      SELECT d.* FROM data_analysis d WHERE d.id = #{id}
+    </select>
+
+    <select id="findByGameId" resultMap="BaseResultMap">
+        SELECT d.* FROM data_analysis d WHERE d.game_id = #{gameId}
+    </select>
+
+    <select id="findWithPlayerPerformanceById" resultMap="ResultMapWithPlayerPerformance">
+        SELECT
+            d.*,
+            p.id AS per_id,
+            p.player_id AS per_playerId,
+            p.team_id AS per_teamId,
+            p.data_analysis_id AS per_dataAnalysisId,
+            p.position AS per_position,
+            p.time AS per_time,
+            p.success_shot AS per_successShot,
+            p.total_shot AS per_totalShot,
+            p.three_point_success_shot AS per_threePointSuccessShot,
+            p.three_point_total_shot AS per_threePointTotalShot,
+            p.free_throw_success_shot AS per_freeThrowSuccessShot,
+            p.free_throw_total_shot AS per_freeThrowTotalShot,
+            p.front_court_rebound AS per_frontCourtRebound,
+            p.back_court_rebound AS per_backCourtRebound,
+            p.assist AS per_assist,
+            p.foul AS per_foul,
+            p.steal AS per_steal,
+            p.turnover AS per_turnover,
+            p.block AS per_block,
+            p.score AS per_score,
+            p.positive_and_negative_value AS per_positiveAndNegativeValue
+        FROM data_analysis d
+        LEFT JOIN player_performance p ON d.id = p.data_analysis_id
+        WHERE d.id = #{id}
+    </select>
+
+    <select id="findWithPlayerPerformanceByGameId" resultMap="ResultMapWithPlayerPerformance">
+        SELECT
+            d.*,
+            p.id AS per_id,
+            p.player_id AS per_playerId,
+            p.team_id AS per_teamId,
+            p.data_analysis_id AS per_dataAnalysisId,
+            p.position AS per_position,
+            p.time AS per_time,
+            p.success_shot AS per_successShot,
+            p.total_shot AS per_totalShot,
+            p.three_point_success_shot AS per_threePointSuccessShot,
+            p.three_point_total_shot AS per_threePointTotalShot,
+            p.free_throw_success_shot AS per_freeThrowSuccessShot,
+            p.free_throw_total_shot AS per_freeThrowTotalShot,
+            p.front_court_rebound AS per_frontCourtRebound,
+            p.back_court_rebound AS per_backCourtRebound,
+            p.assist AS per_assist,
+            p.foul AS per_foul,
+            p.steal AS per_steal,
+            p.turnover AS per_turnover,
+            p.block AS per_block,
+            p.score AS per_score,
+            p.positive_and_negative_value AS per_positiveAndNegativeValue
+        FROM data_analysis d
+            LEFT JOIN player_performance p ON d.id = p.data_analysis_id
+        WHERE d.id = #{gameId}
+    </select>
+
+    <select id="findWithPlayerPerformanceByTeamIdAndDate" resultMap="ResultMapWithPlayerPerformance">
+        SELECT
+            d.*,
+            p.id AS per_id,
+            p.player_id AS per_playerId,
+            p.team_id AS per_teamId,
+            p.data_analysis_id AS per_dataAnalysisId,
+            p.position AS per_position,
+            p.time AS per_time,
+            p.success_shot AS per_successShot,
+            p.total_shot AS per_totalShot,
+            p.three_point_success_shot AS per_threePointSuccessShot,
+            p.three_point_total_shot AS per_threePointTotalShot,
+            p.free_throw_success_shot AS per_freeThrowSuccessShot,
+            p.free_throw_total_shot AS per_freeThrowTotalShot,
+            p.front_court_rebound AS per_frontCourtRebound,
+            p.back_court_rebound AS per_backCourtRebound,
+            p.assist AS per_assist,
+            p.foul AS per_foul,
+            p.steal AS per_steal,
+            p.turnover AS per_turnover,
+            p.block AS per_block,
+            p.score AS per_score,
+            p.positive_and_negative_value AS per_positiveAndNegativeValue
+        FROM data_analysis d
+            LEFT JOIN player_performance p ON d.id = p.data_analysis_id
+            LEFT JOIN game g ON g.id = d.game_id
+        WHERE
+            g.home_team_id = #{homeTeamId}
+        AND g.visit_team_id = #{visitTeamId}
+        AND g.starts_at_date = #{startsAt }
+    </select>
+</mapper>

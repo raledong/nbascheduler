@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.deerowl.dao.GameMapper">
+    <resultMap id="BaseResultMap" type="cn.deerowl.model.BriefGame" >
+        <id column="id" property="id" />
+        <result column="home_team_id" property="homeTeamId"/>
+        <result column="visit_team_id" property="visitTeamId"/>
+        <result column="stadium" property="stadium"/>
+        <result column="audience_count" property="audienceCount"/>
+        <result column="lasts" property="lasts"/>
+        <result column="data_analysis_link" property="dataAnalysisLink"/>
+        <result column="live_link" property="liveLink"/>
+        <result column="starts_at_date" property="startsAtDate" jdbcType="DATE" javaType="java.time.LocalDate"/>
+        <result column="starts_at_time" property="startsAtTime" jdbcType="TIME" javaType="java.time.LocalTime"/>
+    </resultMap>
+
+    <resultMap id="ResultMapWithDataAnalysis" type="cn.deerowl.model.Game">
+        <association property="dataAnalysis"
+                     javaType="cn.deerowl.model.DataAnalysis"
+                     resultMap="cn.deerowl.dao.DataAnalysisMapper.ResultMapWithPlayerPerformance"
+                     columnPrefix="data_"
+                     column="data_id"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO game
+        (home_team_id, visit_team_id, stadium, audience_count, lasts, data_analysis_link, live_link, starts_at_date, starts_at_time)
+        VALUES
+        (#{homeTeamId}, #{visitTeamId}, #{stadium}, #{audienceCount}, #{lasts}, #{dataAnalysisLink}, #{liveLink}, #{startsAtDate}, #{startsAtTime})
+    </insert>
+
+    <update id="update">
+        UPDATE game SET
+            home_team_id = #{homeTeamId},
+            visit_team_id = #{visitTeamId},
+            stadium = #{stadium},
+            audience_count = #{audienceCount},
+            lasts = #{lasts},
+            data_analysis_link = #{dataAnalysisLink},
+            live_link = #{liveLink},
+            starts_at_date = #{startsAtDate},
+            starts_at_time = #{startsAtTime}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByGameId" resultMap="BaseResultMap">
+        SELECT * FROM game WHERE id = #{id}
+    </select>
+
+    <select id="findByGameTeamsAndDate" resultMap="BaseResultMap">
+        SELECT *
+        FROM game
+        WHERE home_team_id = #{homeTeamId}
+              AND visit_team_id = #{visitTeamId}
+              AND starts_at_date = #{startsAtDate}
+    </select>
+
+</mapper>

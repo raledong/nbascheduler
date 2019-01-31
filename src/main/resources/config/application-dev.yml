@@ -1,0 +1,25 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /nba
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://tencent:32769/nba?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: ${DB_USER_NAME:rale}
+    password: ${DB_PASSWD:raledon}
+
+mybatis:
+  config-location: classpath:config/mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: cn.deerowl.model
+
+logging:
+  path: /Users/rale/IdeaProjects/nbascheduler/log
+  level:
+    org.springframework.web: ERROR
+    cn.deerowl: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.deerowl.dao.TeamMapper">
+    <resultMap id="BaseResultMap" type="cn.deerowl.model.Team" >
+        <result column="id" property="id" />
+        <result column="cname" property="cname"/>
+        <result column="ename" property="ename"/>
+        <result column="prename" property="prename"/>
+        <result column="division" property="division"/>
+        <result column="stadium" property="stadium"/>
+        <result column="headcoach" property="headcoach"/>
+        <result column="description" property="description"/>
+        <result column="homepage" property="homePage"/>
+    </resultMap>
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+      INSERT INTO team (cname, ename, prename, division, stadium, headcoach, description, homepage)
+      VALUES (#{cname}, #{ename}, #{prename}, #{division}, #{stadium}, #{headcoach}, #{description}, #{homePage})
+    </insert>
+
+    <select id="getAllTeams" resultMap="BaseResultMap">
+        SELECT * FROM team
+    </select>
+    
+    <select id="searchByCname" resultMap="BaseResultMap">
+        SELECT * FROM team
+        WHERE cname = #{cname}
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM team
+        WHERE id = #{id}
+    </select>
+</mapper>

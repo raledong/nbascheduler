@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.deerowl.dao.PlayerMapper">
+    <resultMap id="BaseResultMap" type="cn.deerowl.model.Player" >
+        <id column="id" property="id" />
+        <result column="cname" property="cname"/>
+        <result column="ename" property="ename"/>
+        <result column="head_img" property="headImg"/>
+        <result column="position" property="position"/>
+        <result column="number" property="number"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="birth" property="birth"/>
+        <result column="contract" property="contract"/>
+        <result column="salary_this_year" property="salaryThisYear"/>
+        <result column="school" property="school"/>
+        <result column="draft" property="draft"/>
+        <result column="nationality" property="nationality"/>
+        <result column="homepage" property="homepage"/>
+        <association property="team"
+                     javaType="cn.deerowl.model.Team"
+                     column="team_id"
+                     resultMap="cn.deerowl.dao.TeamMapper.BaseResultMap"
+                     columnPrefix="team_"/>
+    </resultMap>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO player
+        (cname, ename, head_img, position, number, height, weight, birth, contract, salary_this_year,
+         school, draft, nationality, homepage, team_id)
+        VALUES
+        (#{cname}, #{ename}, #{headImg}, #{position}, #{number}, #{height}, #{weight}, #{birth}, #{contract}, #{salaryThisYear},
+                   #{school}, #{draft}, #{nationality}, #{homepage}, #{team.id})
+    </insert>
+
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT
+            p.*,
+            t.id AS team_id,
+            t.cname AS team_cname,
+            t.ename AS team_ename,
+            t.prename AS team_prename,
+            t.headcoach AS team_headcoach,
+            t.description AS team_description,
+            t.division AS team_division,
+            t.stadium AS team_stadium,
+            t.homepage AS  team_homePage
+        FROM player p
+            LEFT JOIN team t ON t.id = p.team_id
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="findByNameAndTeam" resultMap="BaseResultMap">
+        SELECT
+            p.*,
+            t.id AS team_id,
+            t.cname AS team_cname,
+            t.ename AS team_ename,
+            t.prename AS team_prename,
+            t.headcoach AS team_headcoach,
+            t.description AS team_description,
+            t.division AS team_division,
+            t.stadium AS team_stadium,
+            t.homepage AS  team_homePage
+        FROM player p
+        LEFT JOIN team t ON t.id = p.team_id
+        WHERE (p.cname LIKE '%${name}%' OR p.ename LIKE '%${name}%') AND p.team_id = #{teamId}
+    </select>
+</mapper>
